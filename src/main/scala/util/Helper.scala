@@ -4,10 +4,11 @@ import java.nio.file.Files
 import java.util.Base64
 
 import com.google.gson.Gson
-import model.{KioskInfo, KioskInfoUser, KioskUserId, KioskUserQrInfo}
+import model._
 import net.glxn.qrgen.QRCode
 import repo.{Binder, Repository}
 import constants.Constants._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -61,6 +62,16 @@ trait Helper extends Repository {
     val decryptedData: String = decryptData(kioskUserQrInfo.kioskUserQrInfo)
     val kioskUserId = gson.fromJson(decryptedData, classOf[KioskUserId])
     saveSessionInDB(sessionId, kioskUserId.userId, kioskUserId.kioskId)
+  }
+
+  def generateQRCodeForBet(userBetDetails: UserBetDetails): String = {
+    val betDetailsJson = gson.toJson(userBetDetails)
+    val encryptedBet = encryptData(betDetailsJson)
+    getQRCodeFromData(encryptedBet)
+  }
+
+  def getBetDataFromQRCode(betData: String): String = {
+    decryptData(betData)
   }
 
 }
