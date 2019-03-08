@@ -4,7 +4,7 @@ import com.datastax.driver.core._
 import model.Implicits._
 
 import scala.concurrent.Future
-
+import scala.concurrent.ExecutionContext.Implicits.global
 trait Repository extends Binder {
   def checkIfKioskIdPresent(kioskId: String): Future[Boolean] = {
     val boundStatement: BoundStatement = getKiosk(kioskId)

@@ -8,7 +8,7 @@ import model.{KioskInfo, KioskInfoUser, KioskUserId, KioskUserQrInfo}
 import net.glxn.qrgen.QRCode
 import repo.{Binder, Repository}
 import constants.Constants._
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait Helper extends Repository {

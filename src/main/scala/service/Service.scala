@@ -6,14 +6,14 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Route, StandardRoute}
 import com.datastax.driver.core.utils.UUIDs
 import com.google.gson.Gson
-import model.{KioskInfoUser, KioskUserQrInfo}
+import model.{KioskInfoUser, KioskUserQrInfo, WebRequestJsonSupport}
 import util.Helper
 import constants.Constants._
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
-class Service(ses: Session) extends Helper {
+class Service(ses: Session) extends Helper with WebRequestJsonSupport{
   override val session: Session = ses
   override val gson: Gson = new Gson()
   override val genKey: String = "klix8TW3SMGtHLVO0ZbhwO8ggW0p+npHfB71epkvmE0="
