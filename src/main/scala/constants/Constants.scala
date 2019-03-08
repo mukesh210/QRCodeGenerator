@@ -13,3 +13,4 @@ object Constants {
   val KEYSPACE_NAME = "makeathon"
   val INVALID_KIOSK_ID = "Invalid Kiosk Id"
 }
+

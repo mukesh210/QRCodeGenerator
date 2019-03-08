@@ -6,9 +6,9 @@ import akka.util.Timeout
 import com.typesafe.config.{Config, ConfigFactory}
 import scala.concurrent.duration.SECONDS
 
-abstract class AbstractActor extends Actor {
+abstract class AbstractActor {
   implicit val config: Config = ConfigFactory.load()
   implicit val actorSystem: ActorSystem = ActorSystem("web-app")
   implicit val materialize: ActorMaterializer = ActorMaterializer()
-  implicit val timeout: Timeout = Timeout(config.getInt("askTimeout"), SECONDS)
+  implicit val timeout: Timeout = Timeout(config.getInt("akka.askTimeout"), SECONDS)
 }
