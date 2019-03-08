@@ -18,28 +18,32 @@ class Service(ses: Session) extends Helper with WebRequestJsonSupport{
   override val gson: Gson = new Gson()
   override val genKey: String = "klix8TW3SMGtHLVO0ZbhwO8ggW0p+npHfB71epkvmE0="
 
-  val routes: Route = getKioskQR ~ validateKiosk ~ getSession
+  val routes: Route =
+    path("getKioskQR") {
+      getKioskQR
+    } ~ path("validateKiosk") {
+      validateKiosk
+    }~ path("getSession") {
+      getSession
+    }
 
-  val getKioskQR: Route = path("/getKioskQR") {
-    get {
+
+  val getKioskQR: Route =  get {
       parameters('kioskId.as[String]) { kioskId =>
         getResponseForQRGeneration(encryptAndGenerateQR(kioskId))
       }
     }
-  }
 
-  val validateKiosk: Route = path("/validateKiosk") {
-    post {
+
+  val validateKiosk: Route =  post {
       entity(as[KioskInfoUser]) {kioskInfoUser =>
         onComplete(validateKioskInfoGenerateQR(kioskInfoUser)) {response: Try[String] =>
           processValidateKiosk(response)
         }
       }
     }
-  }
 
-  val getSession: Route = path("/getSession") {
-    post {
+  val getSession: Route =  post {
       entity(as[KioskUserQrInfo]) {kioskUserQrInfo =>
         val sessionId = UUIDs.timeBased().toString
         onComplete(saveSession(sessionId, kioskUserQrInfo)) {response: Try[Boolean] =>
@@ -47,7 +51,6 @@ class Service(ses: Session) extends Helper with WebRequestJsonSupport{
         }
       }
     }
-  }
 
   def processGetSessionResponse(response: Try[Boolean], sessionId: String) = complete {
     response match {
