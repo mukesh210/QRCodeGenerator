@@ -5,20 +5,24 @@ import akka.http.scaladsl.model.{HttpResponse, Multipart, StatusCodes}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Route, StandardRoute}
 import com.datastax.driver.core.utils.UUIDs
-import com.google.gson.Gson
+import com.google.gson.{Gson, JsonObject}
 import model.{KioskInfoUser, KioskUserQrInfo, WebRequestJsonSupport}
 import util.Helper
 import constants.Constants._
-
+import akka.http.scaladsl.server.Directives
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import spray.json._
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
+import Directives._
 
-class Service(ses: Session) extends Helper with WebRequestJsonSupport{
+class Service(ses: Session) extends Helper with WebRequestJsonSupport {
   override val session: Session = ses
   override val gson: Gson = new Gson()
   override val genKey: String = "klix8TW3SMGtHLVO0ZbhwO8ggW0p+npHfB71epkvmE0="
 
-  val routes: Route =
+  val routes: Route = cors() {
     path("getKioskQR") {
       getKioskQR
     } ~ path("validateKiosk") {
@@ -26,6 +30,8 @@ class Service(ses: Session) extends Helper with WebRequestJsonSupport{
     }~ path("getSession") {
       getSession
     }
+  }
+
 
 
   val getKioskQR: Route =  get {
@@ -78,6 +84,9 @@ class Service(ses: Session) extends Helper with WebRequestJsonSupport{
   }
 
   def getResponseForQRGeneration(response: String) = complete {
+//    val jsonObject = new JsonObject()
+//    jsonObject.addProperty("result", response)
+//    HttpResponse(status = StatusCodes.OK, entity = jsonObject.toString)
     HttpResponse(status = StatusCodes.OK, entity = response)
   }
 
