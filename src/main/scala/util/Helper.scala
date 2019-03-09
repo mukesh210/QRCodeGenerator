@@ -76,11 +76,12 @@ trait Helper extends Repository {
   def generateQRCodeForBet(userBetDetails: UserBetDetails): String = {
     val betDetailsJson = gson.toJson(userBetDetails)
     val encryptedBet = encryptData(betDetailsJson)
+    println(s"encryptedBet: ${encryptedBet}")
     getQRCodeFromData(encryptedBet)
   }
 
   def getBetDataFromQRCode(betData: String): String = {
-    decryptData(betData)
+    new String(decryptData(betData))
   }
 
 }

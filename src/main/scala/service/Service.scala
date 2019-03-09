@@ -76,7 +76,8 @@ class Service(ses: Session) extends Helper with WebRequestJsonSupport {
 
   val getBetDataFromQR: Route = get {
     parameters('betData.as[String]) { betData =>
-      val response = getBetDataFromQRCode(betData)
+      val modifiedBetData = betData.replaceAll(" ", "+")
+      val response = getBetDataFromQRCode(modifiedBetData)
       processQRCodeForBet(response)
     }
   }
