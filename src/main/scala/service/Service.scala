@@ -6,17 +6,18 @@ import akka.http.scaladsl.server.{Route, StandardRoute}
 import com.datastax.driver.core.Session
 import com.datastax.driver.core.utils.UUIDs
 import com.google.gson.{Gson, JsonObject}
-import model.{KioskInfoUser, KioskUserQrInfo, WebRequestJsonSupport}
+import model._
 import util.Helper
 import constants.Constants._
 import akka.http.scaladsl.server.Directives
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json._
+
 import scala.concurrent.Future
 import com.google.gson.Gson
 import constants.Constants._
-import model.{KioskInfoUser, KioskUserQrInfo, UserBetDetails, WebRequestJsonSupport}
 import util.Helper
+
 import scala.util.{Failure, Success, Try}
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 import Directives._
@@ -60,8 +61,8 @@ class Service(ses: Session) extends Helper with WebRequestJsonSupport {
   val getSession: Route = post {
     entity(as[KioskUserQrInfo]) { kioskUserQrInfo =>
       val sessionId = UUIDs.timeBased().toString
-      onComplete(saveSession(sessionId, kioskUserQrInfo)) { response: Try[Boolean] =>
-        processGetSessionResponse(response, sessionId)
+      onComplete(saveSession(sessionId, kioskUserQrInfo)) { response: Try[KioskUserSessionInfo] =>
+        processGetSessionResponse(response)
       }
     }
   }
@@ -84,11 +85,11 @@ class Service(ses: Session) extends Helper with WebRequestJsonSupport {
     HttpResponse(status = StatusCodes.OK, entity=response)
   }
 
-  def processGetSessionResponse(response: Try[Boolean], sessionId: String) = complete {
+  def processGetSessionResponse(response: Try[KioskUserSessionInfo]) = complete {
     response match {
-      case Success(result: Boolean) =>
-        if (result)
-          HttpResponse(status = StatusCodes.OK, entity = sessionId)
+      case Success(result: KioskUserSessionInfo) =>
+        if (result.sessionId != "")
+          HttpResponse(status = StatusCodes.OK, entity = gson.toJson(result))
         else
           HttpResponse(status = StatusCodes.InternalServerError, entity = "Session Not established")
 

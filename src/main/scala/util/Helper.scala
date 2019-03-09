@@ -60,10 +60,17 @@ trait Helper extends Repository {
     })
   }
 
-  def saveSession(sessionId: String, kioskUserQrInfo: KioskUserQrInfo): Future[Boolean] = {
+  def saveSession(sessionId: String, kioskUserQrInfo: KioskUserQrInfo): Future[KioskUserSessionInfo] = {
     val decryptedData: String = decryptData(kioskUserQrInfo.kioskUserQrInfo)
     val kioskUserId = gson.fromJson(decryptedData, classOf[KioskUserId])
-    saveSessionInDB(sessionId, kioskUserId.email, kioskUserId.kioskId)
+    saveSessionInDB(sessionId, kioskUserId.email, kioskUserId.kioskId).map(value => {
+      if(value)
+          KioskUserSessionInfo(kioskUserId.kioskId, kioskUserId.email, sessionId)
+      else
+          KioskUserSessionInfo("", "", "")
+    }
+
+    )
   }
 
   def generateQRCodeForBet(userBetDetails: UserBetDetails): String = {
