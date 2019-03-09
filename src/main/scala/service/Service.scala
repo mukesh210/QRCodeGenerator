@@ -33,6 +33,10 @@ class Service(ses: Session) extends Helper with WebRequestJsonSupport {
       validateKiosk
     } ~ path("getSession") {
       getSession
+    } ~ path("generateBetQR") {
+      generateBetQRCode
+    } ~ path("getBetData") {
+      getBetDataFromQR
     }
   }
 

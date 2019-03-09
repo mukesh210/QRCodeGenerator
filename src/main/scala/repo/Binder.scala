@@ -21,7 +21,7 @@ trait Binder {
     val preparedStatement = session.prepare(QueryConstants.INSERT_SESSION)
     val boundStatement = preparedStatement.bind()
     boundStatement.setString(KIOSK_ID, kioskId)
-    boundStatement.setString(USER_ID, userId)
+    boundStatement.setString(EMAIL, userId)
     boundStatement.setString(SESSION_ID, sessionId)
 
     boundStatement

@@ -44,16 +44,18 @@ trait Helper extends Repository {
 
   def validateKioskInfoGenerateQR(kioskInfoUser: KioskInfoUser): Future[String] = {
     val kioskInfo = kioskInfoUser.kioskInfo
-    val userId = kioskInfoUser.userId
+    val userId = kioskInfoUser.email
     val decryptedKioskData = decryptData(kioskInfo)
     val kioskInfoClass: KioskInfo = gson.fromJson(decryptedKioskData, classOf[KioskInfo])
     checkIfKioskIdPresent(kioskInfoClass.kioskId).map(x => {
       if(x){
         val kioskUserId = KioskUserId(kioskInfoClass.kioskId, userId)
         val kioskUserIdJson: String = gson.toJson(kioskUserId)
-        val kioskUserIdJsonQR: String = getQRCodeFromData(kioskUserIdJson)
-        val kioskUserQRInfo = KioskUserQrInfo(kioskUserIdJsonQR)
-        gson.toJson(kioskUserQRInfo)
+        val encryptedData = encryptData(kioskUserIdJson)
+        val kioskUserIdJsonQR: String = getQRCodeFromData(encryptedData)
+        kioskUserIdJsonQR
+        /*val kioskUserQRInfo = KioskUserQrInfo(kioskUserIdJsonQR)
+        gson.toJson(kioskUserQRInfo)*/
       } else INVALID_KIOSK_ID
     })
   }
@@ -61,7 +63,7 @@ trait Helper extends Repository {
   def saveSession(sessionId: String, kioskUserQrInfo: KioskUserQrInfo): Future[Boolean] = {
     val decryptedData: String = decryptData(kioskUserQrInfo.kioskUserQrInfo)
     val kioskUserId = gson.fromJson(decryptedData, classOf[KioskUserId])
-    saveSessionInDB(sessionId, kioskUserId.userId, kioskUserId.kioskId)
+    saveSessionInDB(sessionId, kioskUserId.email, kioskUserId.kioskId)
   }
 
   def generateQRCodeForBet(userBetDetails: UserBetDetails): String = {

@@ -4,13 +4,13 @@ import spray.json.{DefaultJsonProtocol, DeserializationException, JsArray, JsNum
 
 case class KioskInfo(kioskId: String)
 
-case class KioskInfoUser(kioskInfo: String, userId: String)
+case class KioskInfoUser(kioskInfo: String, email: String)
 
-case class KioskUserId(kioskId: String, userId: String)
+case class KioskUserId(kioskId: String, email: String)
 
 case class KioskUserQrInfo(kioskUserQrInfo: String)
 
-case class UserBetDetails(betId: String, userId: String, kioskId: String, matchId: String, amountDue: String)
+case class UserBetDetails(betId: String, email: String, kioskId: String, matchId: String, amountDue: String)
 
 trait WebRequestJsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val kioskInfoUserFormat: RootJsonFormat[KioskInfoUser] = jsonFormat2(KioskInfoUser)

@@ -9,7 +9,7 @@ trait Repository extends Binder {
   def checkIfKioskIdPresent(kioskId: String): Future[Boolean] = {
     val boundStatement: BoundStatement = getKiosk(kioskId)
     val result: Future[ResultSet] = session.executeAsync(boundStatement).asScala
-    result.map(_.isExhausted)
+    result.map(!_.isExhausted)
   }
 
   def saveSessionInDB(sessionId: String, userId: String, kioskId: String): Future[Boolean] = {
