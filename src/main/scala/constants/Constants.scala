@@ -10,7 +10,7 @@ object Constants {
   val KIOSK_ID = "kiosk_id"
   val SESSION_ID = "session_id"
   val EMAIL = "email"
-  val KEYSPACE_NAME = "makeathon"
+  val KEYSPACE_NAME = "local1"
   val INVALID_KIOSK_ID = "Invalid Kiosk Id"
 }
 

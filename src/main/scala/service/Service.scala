@@ -41,14 +41,11 @@ class Service(ses: Session) extends Helper with WebRequestJsonSupport {
     }
   }
 
-
-
   val getKioskQR: Route = get {
     parameters('kioskId.as[String]) { kioskId =>
       getResponseForQRGeneration(encryptAndGenerateQR(kioskId))
     }
   }
-
 
   val validateKiosk: Route = post {
     entity(as[KioskInfoUser]) { kioskInfoUser =>
