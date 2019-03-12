@@ -1,6 +1,9 @@
 package service
 
-import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
+import java.io.File
+import java.nio.file.{Files, Paths}
+
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Route, StandardRoute}
 import com.datastax.driver.core.Session
@@ -21,6 +24,8 @@ import util.Helper
 import scala.util.{Failure, Success, Try}
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 import Directives._
+import akka.http.scaladsl.server.directives.FileInfo
+import akka.stream.scaladsl.FileIO
 
 class Service(ses: Session) extends Helper with WebRequestJsonSupport {
   override val session: Session = ses
@@ -38,6 +43,8 @@ class Service(ses: Session) extends Helper with WebRequestJsonSupport {
       generateBetQRCode
     } ~ path("getBetData") {
       getBetDataFromQR
+    } ~ path("changeBanner") {
+      downloadFile
     }
   }
 
@@ -76,6 +83,22 @@ class Service(ses: Session) extends Helper with WebRequestJsonSupport {
       val modifiedBetData = betData.replaceAll(" ", "+")
       val response = getBetDataFromQRCode(modifiedBetData)
       processQRCodeForBet(response)
+    }
+  }
+
+
+  def tempDestination(fileInfo: FileInfo): File =
+    new File("/tmp", fileInfo.fileName)
+
+
+  val downloadFile: Route = post {
+    storeUploadedFile("csv", tempDestination) {
+      case (metadata, file) =>
+        println(s"metadata: ${metadata} file:${file}")
+        // do something with the file and file metadata ...
+        Thread.sleep(2000)
+        //file.delete()
+        complete(StatusCodes.OK)
     }
   }
 
